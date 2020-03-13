@@ -2,10 +2,7 @@
 // described here: https://blog.reasonsecurity.com/2020/03/09/covid-19-info-stealer-the-map-of-threats-threat-analysis-report/
 
 DeviceFileEvents 
-| where FileName matches regex ".*corona.*\\.(exe|bat)"
-| where FileName matches regex ".*bin.*\\.(exe)"
-| where FileName matches regex ".*build.*\\.(exe)"
-| where FileName matches regex ".*Windows.Globalization.Fontgroups.*\\.(exe)"
+| where FileName matches regex ".*(build|bin|corona|Windows.Globalization.Fontgroups).*\\.(exe|bat)"
 
 DeviceRegistryEvents 
 | where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\ProxyBypass"
