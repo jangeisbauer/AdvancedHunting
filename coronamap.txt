@@ -4,31 +4,14 @@
 DeviceFileEvents 
 | where FileName matches regex ".*(build|bin|corona|Windows.Globalization.Fontgroups).*\\.(exe|bat)"
 
-DeviceRegistryEvents 
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\ProxyBypass"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\IntranetName"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\UNCAsIntrane"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\AutoDetect"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\ProxyBypass"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\IntranetName"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\UNCAsIntranet"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\AutoDetect"
-| where RegistryKey == "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Notifications\\Data\\418A073AA3BC347"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\5.0\\Cache\\Content\\CachePrefix"  
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\5.0\\Cache\\Cookies\\CachePrefix"
-| where RegistryKey == "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\5.0\\Cache\\History\\CachePrefix"
-| where RegistryKey == "HKLM\\System\\CurrentControlSet\\Services\\bam\\State\\UserSettings\\S-1-5-21-3887374624-1885671809-3229943349-1001\\\\Device\\HarddiskVoume4\\Windows\\SysWOW64\\cmd.exe"
-| where RegistryKey == "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Notifications\\Data\\418A073AA3BC3475"
-| where RegistryKey == "HKCU\\Software\\Classes\\Local Settings\\MuiCache\\56\\52C64B7E\\LanguageList"
-| where RegistryKey == "HKCU\\Software\\Classes\\Local Settings\\MuiCache\\56\\52C64B7E\\LanguageList"
-| where RegistryKey == "HKCU\\Software\\Classes\\Local Settings\\MuiCache\\56\\52C64B7E\\LanguageList"
-| where RegistryKey == "HKCU\\Software\\Classes\\Local Settings\\MuiCache\\56\\52C64B7E\\LanguageList"
+DeviceEvents
+| where SHA256 == "2b35aa9c70ef66197abfb9bc409952897f9f70818633ab43da85b3825b256307" 
 
 DeviceNetworkEvents 
-| where RemoteIP == "104.24.103.192"
-| where RemoteIP == "149.154.167.220"
-| where RemoteIP == "104.26.9.44"
-| where RemoteIP == "93.184.220"
-| where RemoteIP == "18.205.183.153"
-| where RemoteIP == "54.192.87.49"
-| where RemoteIP == "54.192.87.49"
+| where RemoteIP in ("104.24.103.192", "149.154.167.220", "104.26.9.44","93.184.220","18.205.183.153","54.192.87.49")
+| where InitiatingProcessFileName !contains "chrome.exe" 
+| where InitiatingProcessFileName !contains "iexplore.exe" 
+| where InitiatingProcessFileName !contains "MicrosoftEdgeCP.exe" 
+| where InitiatingProcessFileName !contains "firefox.exe" 
+| where InitiatingProcessFileName !contains "msedge.exe" 
+| where InitiatingProcessFileName !contains "MicrosoftEdge.exe" 
