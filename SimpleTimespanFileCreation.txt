@@ -1,0 +1,5 @@
+DeviceFileEvents 
+| where DeviceName == "devicename"
+| where ActionType == "FileCreated"
+| where Timestamp between(datetime(2020-03-13 11:00) .. datetime(2020-03-13 15:00))
+| project FileName , FolderPath , InitiatingProcessCommandLine , InitiatingProcessParentFileName 
