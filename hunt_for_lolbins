@@ -1,0 +1,67 @@
+// hunting for lolbins listed here: https://github.com/api0cradle/LOLBAS/blob/master/LOLBins.md
+
+DeviceProcessEvents 
+| where DeviceName == "computer"
+| where ProcessCommandLine contains "Atbroker.exe" or
+ProcessCommandLine contains "Bash.exe" or
+ProcessCommandLine contains "Bitsadmin.exe" or
+ProcessCommandLine contains "Certutil.exe" or
+ProcessCommandLine contains "Cmdkey.exe" or
+ProcessCommandLine contains "Cmstp.exe" or
+ProcessCommandLine contains "Control.exe" or
+ProcessCommandLine contains "Csc.exe" or
+ProcessCommandLine contains "Cscript.exe" or
+ProcessCommandLine contains "Dfsvc.exe" or
+ProcessCommandLine contains "Diskshadow.exe" or
+ProcessCommandLine contains "Dnscmd.exe" or
+ProcessCommandLine contains "Esentutl.exe" or
+ProcessCommandLine contains "Extexport.exe" or
+ProcessCommandLine contains "Extrac32.exe" or
+ProcessCommandLine contains "Expand.exe" or
+ProcessCommandLine contains "Explorer.exe" or
+ProcessCommandLine contains "Findstr.exe" or
+ProcessCommandLine contains "Forfiles.exe" or
+ProcessCommandLine contains "Gpscript.exe" or
+ProcessCommandLine contains "Hh.exe" or
+ProcessCommandLine contains "Ieexec.exe" or
+ProcessCommandLine contains "Ie4uinit.exe" or
+ProcessCommandLine contains "Infdefaultinstall.exe" or
+ProcessCommandLine contains "Installutil.exe" or
+ProcessCommandLine contains "Makecab.exe" or
+ProcessCommandLine contains "Mavinject.exe" or
+ProcessCommandLine contains "Msbuild.exe" or
+ProcessCommandLine contains "Msconfig.exe" or
+ProcessCommandLine contains "Msdt.exe" or
+ProcessCommandLine contains "Mshta.exe" or
+ProcessCommandLine contains "Msiexec.exe" or
+ProcessCommandLine contains "Netsh.exe" or
+ProcessCommandLine contains "Nltest.exe" or
+ProcessCommandLine contains "Odbcconf.exe" or
+ProcessCommandLine contains "Openwith.exe" or
+ProcessCommandLine contains "Pcalua.exe" or
+ProcessCommandLine contains "Pcwrun.exe" or
+ProcessCommandLine contains "Powershell.exe" or
+ProcessCommandLine contains "Presentationhost.exe" or
+ProcessCommandLine contains "Print.exe" or
+ProcessCommandLine contains "Psr.exe" or
+ProcessCommandLine contains "Reg.exe" or
+ProcessCommandLine contains "Regedit.exe" or
+ProcessCommandLine contains "Regasm.exe" or
+ProcessCommandLine contains "Register-cimprovider.exe" or
+ProcessCommandLine contains "Regsvcs.exe" or
+ProcessCommandLine contains "Regsvr32.exe" or
+ProcessCommandLine contains "Replace.exe" or
+ProcessCommandLine contains "Robocopy.exe" or
+ProcessCommandLine contains "Rpcping.exe" or
+ProcessCommandLine contains "Rundll32.exe" or
+ProcessCommandLine contains "Runonce.exe" or
+ProcessCommandLine contains "Runscripthelper.exe" or
+ProcessCommandLine contains "Sc.exe" or
+ProcessCommandLine contains "Scriptrunner.exe" or
+ProcessCommandLine contains "Syncappvpublishingserver.exe" or
+ProcessCommandLine contains "Wab.exe" or
+ProcessCommandLine contains "Wmic.exe" or
+ProcessCommandLine contains "Wscript.exe" or
+ProcessCommandLine contains "Xwizard.exe"
+| where Timestamp between(datetime(2020-03-13 11:00) .. datetime(2020-03-13 15:00))
+| project Timestamp, ProcessCommandLine, InitiatingProcessCommandLine 
