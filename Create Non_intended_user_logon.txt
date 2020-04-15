@@ -26,4 +26,4 @@ DeviceLogonEvents
 | where AccountName !in~ (Special_users)
 | where AccountName !in~ (Special_users_upn)
 | where AccountName != "" 
-| where AccountDomain =~ "specialExcludeDomain"
+| where AccountDomain =~ "specialDomain"
