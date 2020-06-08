@@ -2,4 +2,4 @@
 // Ref: https://blog.xpnsec.com/hiding-your-dotnet-complus-etwenabled/
 
 search in (DeviceRegistryEvents, DeviceProcessEvents)
-RegistryKey contains "ETWEnabled" or ProcessCommandLine contains "COMPlus_ETWEnabled"
+RegistryKey contains "ETWEnabled" or ProcessCommandLine contains "ETWEnabled"
