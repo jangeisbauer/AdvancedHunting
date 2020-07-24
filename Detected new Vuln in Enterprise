@@ -7,5 +7,5 @@ DeviceTvmSoftwareVulnerabilitiesKB
 | where LastModifiedTime >ago(1day);
 DeviceTvmSoftwareInventoryVulnerabilities 
 | join newVuln on CveId
-| summarize dcount(DeviceId) by DeviceName, DeviceId, Timestamp=LastModifiedTime, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, ReportId=CveId
-| project Timestamp, DeviceName, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, DeviceId, ReportId
+| summarize dcount(DeviceId) by DeviceName, DeviceId, Timestamp=LastModifiedTime, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable
+| project Timestamp, DeviceName, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, DeviceId
