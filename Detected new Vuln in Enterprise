@@ -1,0 +1,11 @@
+// Detected new Vuln in Enterprise
+// @janvonkirchheim
+
+let newVuln = 
+DeviceTvmSoftwareVulnerabilitiesKB 
+| where VulnerabilitySeverityLevel == "Critical"
+| where LastModifiedTime >ago(1day);
+DeviceTvmSoftwareInventoryVulnerabilities 
+| join newVuln on CveId
+| summarize dcount(DeviceId) by DeviceName, DeviceId, Timestamp=LastModifiedTime, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, ReportId=CveId
+| project Timestamp, DeviceName, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, DeviceId, ReportId
