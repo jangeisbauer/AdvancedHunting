@@ -1,0 +1,14 @@
+// wsreset and new-item events in short timeframe
+// ARBITRARY FILE DELETE VIA WSRESET.EXE 
+// more info: https://daniels-it-blog.blogspot.com/2020/07/arbitrary-file-delete-via-wsresetexe.html
+// author: @janvonkirchheim
+
+DeviceProcessEvents 
+| where ProcessCommandLine contains "wsreset"
+| where InitiatingProcessFileName contains "Powershell" or InitiatingProcessFileName contains "cmd"
+|join kind=inner (
+DeviceEvents
+| where ActionType contains "PowerShellCommand"
+| where AdditionalFields has "New-Item")
+on DeviceName
+| where Timestamp1 between (datetime_add('minute',-10,Timestamp) .. datetime_add('minute',0,Timestamp))
