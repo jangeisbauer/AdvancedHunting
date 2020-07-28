@@ -5,10 +5,13 @@
 
 DeviceProcessEvents 
 | where ProcessCommandLine contains "wsreset"
-| where InitiatingProcessFileName contains "Powershell" or InitiatingProcessFileName contains "cmd"
+| where InitiatingProcessFileName contains "Powershell" or InitiatingProcessFileName contains "cmd" //OPTIONAL: you can try it without this line
 |join kind=inner (
 DeviceEvents
 | where ActionType contains "PowerShellCommand"
 | where AdditionalFields has "New-Item")
 on DeviceName
 | where Timestamp1 between (datetime_add('minute',-10,Timestamp) .. datetime_add('minute',0,Timestamp))
+
+//The Optional Line: without this line, you catch all occurrances of wsreset execution. But it might be dangerous, if wsreset under some circumstances is triggered by the system, 
+// you might get many alerts ...
