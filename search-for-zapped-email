@@ -1,0 +1,7 @@
+// searches for zapped email with certain attachment
+// author: @janvonkirchheim
+
+EmailAttachmentInfo 
+| where FileName has "attachment-title"
+| join EmailPostDeliveryEvents on NetworkMessageId 
+| project SenderFromAddress, RecipientEmailAddress, Action, ActionResult 
