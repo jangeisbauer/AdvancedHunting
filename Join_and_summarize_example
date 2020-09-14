@@ -1,0 +1,7 @@
+DeviceEvents 
+| where ActionType == 'ExploitGuardEafViolationAudited' or 
+ActionType == 'ExploitGuardEafViolationBlocked' or 
+ActionType == 'ExploitGuardIafViolationAudited' or 
+ActionType == 'ExploitGuardIafViolationBlocked'
+| join DeviceInfo on DeviceId
+| summarize make_set(MachineGroup)
