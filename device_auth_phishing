@@ -1,0 +1,8 @@
+// Will detect phishing by the use of device authentication
+// Based on Nestori Syynimaa's POC: https://www.youtube.com/watch?v=GFWpd1HCRLs&feature=youtu.be
+// author: @janvonkirchheim
+
+EmailUrlInfo 
+| where Url =~ "https://login.microsoftonline.com/common/oauth2/deviceauth"
+| join EmailEvents on NetworkMessageId 
+| project SenderMailFromAddress, SenderFromAddress, SenderIPv4, RecipientEmailAddress, Subject, Url 
