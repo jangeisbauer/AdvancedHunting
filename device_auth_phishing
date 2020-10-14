@@ -3,6 +3,6 @@
 // author: @janvonkirchheim
 
 EmailUrlInfo 
-| where Url =~ "https://login.microsoftonline.com/common/oauth2/deviceauth"
+| where Url =~ "https://login.microsoftonline.com/common/oauth2/deviceauth" or Url contains "microsoft.com/devicelogin"
 | join EmailEvents on NetworkMessageId 
 | project SenderMailFromAddress, SenderFromAddress, SenderIPv4, RecipientEmailAddress, Subject, Url 
