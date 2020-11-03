@@ -1,0 +1,7 @@
+DeviceAlertEvents 
+| where Category == "UnwantedSoftware"
+| where Timestamp > ago(30d)
+| join DeviceInfo on DeviceName
+| mv-expand User = parse_json(LoggedOnUsers)
+| project Timestamp, DeviceName, Severity, Category, Title, FileName, User=User.UserName
+| summarize count() by FileName, DeviceName, tostring(User)
