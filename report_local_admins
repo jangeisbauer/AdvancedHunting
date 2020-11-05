@@ -1,0 +1,6 @@
+DeviceLogonEvents 
+| where IsLocalAdmin == 1 
+| where AccountName !startswith "adm" and AccountName !startswith "sys"
+| join DeviceInfo on DeviceName
+| project AccountName, DeviceName, LoggedOnUsers
+| summarize count() by AccountName, DeviceName, LoggedOnUsers
