@@ -1,0 +1,12 @@
+// gets a gist that holds IDs of permissions and permission names
+// queries the AuditLogs from AAD for action 'update application'
+// extracts the permission IDs and joins it with the gist to get the permission name
+// author: @janvonkirchheim
+
+let aadAppPermissions = (externaldata(permissionID:string,permissionName:string)
+[@"https://gist.githubusercontent.com/jangeisbauer/11348bda68550c3d4642c26f8f4bed1e/raw/3b1fc1a991ade3e730d1e99f87133f7705adb0a4/aadAppPermissions"]
+with (format="csv"));
+AuditLogs
+| where OperationName == "Update application"
+| extend EntitlementId_ = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(TargetResources[0].modifiedProperties))[0].newValue))[0].RequiredAppPermissions))[1].EntitlementId)
+| join aadAppPermissions on $left.EntitlementId_ == $right.permissionID
