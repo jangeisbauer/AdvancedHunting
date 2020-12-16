@@ -1,0 +1,11 @@
+// looks up ASR Name and URL to Microsoft Docs for given ASR rules found in the data
+// author: @janvonkirchheim
+
+let asrTable = (externaldata(asrName:string,asrGUID:string,asrLink:string)
+[@"https://gist.githubusercontent.com/jangeisbauer/6f779d12a4b6a859da4e40ef62019252/raw/4571b1ff649986773646cb6aa393195c57a519af/gistfile1.txt"]
+with (format="CSV"));
+DeviceEvents
+| where ActionType startswith "asr"
+| extend asrGuidDE= tostring(parse_json(AdditionalFields).RuleId)
+| join asrTable on $left.asrGuidDE == $right.asrGUID
+| project Timestamp, asrGUID, asrName, asrLink, DeviceName, ActionType, FileName, FolderPath, AccountName, ProcessCommandLine, InitiatingProcessCommandLine
