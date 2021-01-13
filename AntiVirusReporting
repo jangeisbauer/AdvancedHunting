@@ -1,0 +1,8 @@
+// Reports on "update antivirus signatures == Scid-2011"
+// based on OS Plattform
+// Author: @janvonkirchheim
+
+DeviceTvmSecureConfigurationAssessment 
+| where ConfigurationId == "scid-2011" // update antivirus signatures
+| join kind=leftouter DeviceTvmSecureConfigurationAssessmentKB on ConfigurationId 
+| summarize count() by OSPlatform
