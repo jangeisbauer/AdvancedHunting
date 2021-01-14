@@ -1,0 +1,4 @@
+DeviceAlertEvents 
+| join DeviceInfo on DeviceId
+| mv-expand UserName = parse_json(LoggedOnUsers)
+| project UserName.UserName
