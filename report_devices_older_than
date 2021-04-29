@@ -1,0 +1,8 @@
+// this will report devices in MDE that are older than builds starting with 18 
+// (so everything before 18)
+// @janvonkirchheim
+
+DeviceInfo 
+| where OSPlatform == "Windows10"
+| where toint(substring(OSBuild,0,2)) < 18
+| summarize arg_max(Timestamp,*) by  DeviceName
