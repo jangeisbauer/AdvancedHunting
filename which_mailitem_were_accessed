@@ -1,0 +1,18 @@
+// the accessed mail-item in MCAS does not tell you about the subject
+// it only provides you with the InternetMessageId in RawEventData
+// This query extracts it from RawEventData and joins it with 
+// EmailEvents table to get more info about the accessed mail-item
+
+CloudAppEvents 
+| where AccountObjectId  == "AccountID"
+| where Timestamp between (datetime(2021-03-20)..datetime(2021-03-30))
+| where City == "lagos"
+| where RawEventData contains "InternetMessageId"
+| extend  e1 = RawEventData.Folders
+| mv-expand e2 = parse_json(e1)
+| extend e3 = e2.FolderItems
+| mv-expand e4 = parse_json(e3)
+| extend INetMsgID=tostring(e4.InternetMessageId)
+| join EmailEvents on $left.INetMsgID == $right.InternetMessageId
+| where SenderMailFromAddress == "Email@Address" or RecipientEmailAddress == "Email@Address"
+| distinct Subject, ActionType
