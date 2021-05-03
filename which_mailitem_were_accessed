@@ -6,7 +6,7 @@
 CloudAppEvents 
 | where AccountObjectId  == "AccountID"
 | where Timestamp between (datetime(2021-03-20)..datetime(2021-03-30))
-| where City == "lagos"
+| where City == "ushuaia"
 | where RawEventData contains "InternetMessageId"
 | extend  e1 = RawEventData.Folders
 | mv-expand e2 = parse_json(e1)
