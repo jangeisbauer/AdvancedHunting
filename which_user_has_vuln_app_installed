@@ -1,0 +1,12 @@
+// I need to write an Email to all the users that have this
+// vulnerable Software installed - where do I get all the Email Addresses?
+// @janvonkirchheim
+
+DeviceTvmSoftwareVulnerabilities 
+| where SoftwareName == "zoom"
+| join kind=inner DeviceInfo on DeviceId
+| where isnotempty(LoggedOnUsers) 
+| mv-expand ex = parse_json(LoggedOnUsers)
+| extend sid=tostring(ex.Sid)
+| join kind=inner IdentityInfo on $left.sid == $right.OnPremSid
+| summarize Email=make_set(EmailAddress) by SoftwareName
