@@ -5,4 +5,5 @@
 DeviceTvmSecureConfigurationAssessment 
 | where ConfigurationId == "scid-2011" // update antivirus signatures
 | join kind=leftouter DeviceTvmSecureConfigurationAssessmentKB on ConfigurationId 
-| summarize count() by OSPlatform
+| mv-expand  e = parse_json(Context)
+| project DeviceName, OSPlatform, SignatureVersion=e[0], EngineVersion=e[1]
