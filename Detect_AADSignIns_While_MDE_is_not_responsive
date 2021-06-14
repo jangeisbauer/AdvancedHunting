@@ -1,0 +1,20 @@
+// Looks back for last updates of DeviceInfo and compares it to last entries in AADSignInEventBeta
+// If there where AAD SignIns in the last couple of days, but not updates to DeviceInfo, records will be shown
+// To detect possible disablement of defender for endpoint 
+// @janvonkirchheim
+//
+let lookback = timespan(30d); //how log do you want to look back for DeviceInfo and AADSignIns
+let timeDiff = timespan(4d); //how many days between last seen by Defender and last seen AAD SignIn
+let OnbardedDevices = DeviceInfo 
+| where OnboardingStatus == "Onboarded"
+| summarize T1 = arg_max(Timestamp, *) by DeviceName
+| where T1 > ago(lookback)
+| project D1 = tolower(DeviceName), T1;
+let AADSignIns = AADSignInEventsBeta
+| where Timestamp > ago(lookback)
+| project D2 = tolower(DeviceName), Application, Browser, City, Country, ClientAppUsed, DeviceTrustType, IPAddress, IsManaged, OSPlatform, Timestamp;
+OnbardedDevices | join AADSignIns on $left.D1 == $right.D2
+| summarize T2 = arg_max(Timestamp, *) by D2
+| where T2 - T1 >= timeDiff
+| summarize count() by Device = D1, LastSeenByMDE = T1, LastSeenByAAD = T2, Application, Browser, City, Country, ClientAppUsed, DeviceTrustType, IPAddress, IsManaged, OSPlatform
+| project-away count_
