@@ -3,8 +3,8 @@
 // To detect possible disablement of defender for endpoint 
 // @janvonkirchheim
 //
-let lookback = timespan(30d); //how log do you want to look back for DeviceInfo and AADSignIns
-let timeDiff = timespan(4d); //how many days between last seen by Defender and last seen AAD SignIn
+let lookback = timespan(30d); //how log do you want to look back for DeviceInfo and IdentityLogonEvents
+let timeDiff = timespan(4d); //how many days between last seen by Defender and last seen AD SignIn
 let OnbardedDevices = DeviceInfo 
 | where OnboardingStatus == "Onboarded"
 | summarize T1 = arg_max(Timestamp, *) by DeviceName
