@@ -9,12 +9,14 @@ let OnbardedDevices = DeviceInfo
 | where OnboardingStatus == "Onboarded"
 | summarize T1 = arg_max(Timestamp, *) by DeviceName
 | where T1 > ago(lookback)
-| project D1 = tolower(DeviceName), T1;
+| extend  hostname1 = extract("[^.]*",0, tolower(DeviceName)) 
+| project D1 = tolower(hostname1), T1;
 let AADSignIns = AADSignInEventsBeta
 | where Timestamp > ago(lookback)
 | project D2 = tolower(DeviceName), Application, Browser, City, Country, ClientAppUsed, DeviceTrustType, IPAddress, IsManaged, OSPlatform, Timestamp;
 OnbardedDevices | join AADSignIns on $left.D1 == $right.D2
-| summarize T2 = arg_max(Timestamp, *) by D2
+| extend  hostname2 = extract("[^.]*",0, tolower(D2)) 
+| summarize T2 = arg_max(Timestamp, *) by hostname2
 | where T2 - T1 >= timeDiff
 | summarize count() by Device = D1, LastSeenByMDE = T1, LastSeenByAAD = T2, Application, Browser, City, Country, ClientAppUsed, DeviceTrustType, IPAddress, IsManaged, OSPlatform
 | project-away count_
