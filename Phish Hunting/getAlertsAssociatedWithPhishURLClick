@@ -1,0 +1,21 @@
+// Hunt for other alerts related to User or Device associated with a Spam URL clicked event
+//
+// Author: @janvonkirchheim
+//
+// get all alerts by device
+let lookBackDuration = 30d;
+AlertInfo
+| where Timestamp > ago(lookBackDuration)
+| where Title contains "click"
+| join AlertEvidence on AlertId
+| extend p = pack(format_datetime(Timestamp, 'y-M-d h:m'),Title)
+| summarize All_Alerts=make_bag(p) by DeviceName
+
+// get all alerts by user
+let lookBackDuration = 30d;
+AlertInfo
+| where Timestamp > ago(lookBackDuration)
+| where Title contains "click"
+| join AlertEvidence on AlertId
+| extend p = pack(format_datetime(Timestamp, 'y-M-d h:m'),Title)
+| summarize All_Alerts=make_bag(p) by AccountUpn
