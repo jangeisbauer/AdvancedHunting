@@ -1,0 +1,38 @@
+// Gives an overview of what sign-ins happend after a user clicked on a phishing link
+//
+// Author: @janvonkirchheim
+//
+// get all phishing link clicked alerts 
+let lookBackDuration = 30d;
+let clickedAlerts = AlertInfo
+| where Timestamp > ago(lookBackDuration)
+| where Title contains "click"
+| join AlertEvidence on AlertId
+| summarize count() by AccountObjectId, AccountUpn, DeviceName, alertTimestamp=Timestamp;
+// get logon country distribution from all users involved in the alerts
+let logonDistributionCountry = AADSignInEventsBeta 
+| where Timestamp > ago(30d)
+| where AccountObjectId in (clickedAlerts)
+| summarize count() by AccountObjectId, Country
+| extend p = pack(Country, tostring(count_))
+| summarize logonDistributionByCountry=make_bag(p) by AccountObjectId;
+// get logon device distribution from all users involved in the alerts
+let logonDistributionDevice = AADSignInEventsBeta 
+| where Timestamp > ago(30d)
+| where AccountObjectId in (clickedAlerts)
+| summarize count() by AccountObjectId, DeviceName
+| extend p = pack(DeviceName, tostring(count_))
+| summarize logonDistributionByDevice=make_bag(p) by AccountObjectId;
+// join all and look at the time shortly after die alerts and check for logon countries and devices while filtering AADjoined devices
+clickedAlerts
+| join logonDistributionDevice on AccountObjectId
+| join logonDistributionCountry on AccountObjectId
+| join AADSignInEventsBeta on AccountObjectId 
+| where Timestamp > ago(30d)
+| project-rename signInTime = Timestamp, IP = IPAddress 
+| where signInTime between (alertTimestamp..datetime_add('hour', 8, alertTimestamp))
+| where DeviceTrustType != "Azure AD joined"
+| invoke DeviceFromIP() 
+| summarize SignInAfterClickErrorCode=make_set(ErrorCode) by AccountDisplayName, RiskState, Country, tostring(logonDistributionByCountry), Device=DeviceName1, DeviceTrustType, tostring(logonDistributionByDevice)
+| project-reorder AccountDisplayName, RiskState, SignInAfterClickErrorCode, Country, logonDistributionByCountry, Device, DeviceTrustType, logonDistributionByDevice
+| sort by AccountDisplayName asc 
