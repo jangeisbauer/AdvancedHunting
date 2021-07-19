@@ -15,3 +15,4 @@ DeviceProcessEvents
 | invoke FileProfile() 
 | where GlobalPrevalence < 50
 | where SignerHash != "c5bfb27ef9ab20406e5ef5f78726f7f953fdab27"
+| project FileName, AccountName, DeviceName, GlobalFirstSeen, GlobalLastSeen, GlobalPrevalence, Signer, SignatureState
