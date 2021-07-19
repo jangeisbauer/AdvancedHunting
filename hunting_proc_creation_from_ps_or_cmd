@@ -1,0 +1,17 @@
+// Build your own baseline, play with the globalPrevelance parameter and 
+// exclude SignerHashes that are common in your environment to find
+// anomalies later on.
+// Author: @janvonkirchheim
+
+DeviceProcessEvents 
+| where InitiatingProcessFileName =~ "powershell.exe"
+| where InitiatingProcessParentFileName != "Code.exe"
+| invoke FileProfile() 
+| where GlobalPrevalence < 5000
+| project FileName, AccountName, DeviceName, GlobalFirstSeen, GlobalLastSeen, GlobalPrevalence, Signer, SignatureState
+
+DeviceProcessEvents 
+| where InitiatingProcessFileName =~ "cmd.exe"
+| invoke FileProfile() 
+| where GlobalPrevalence < 50
+| where SignerHash != "c5bfb27ef9ab20406e5ef5f78726f7f953fdab27"
