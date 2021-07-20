@@ -1,0 +1,13 @@
+// hunt for powershell download activities, then take a look at process creations from
+// ps within the following minutes. Check for global prevalence of the file that are spawend from ps
+// author: @janvonkirchheim
+
+DeviceEvents 
+| where ActionType == "PowerShellCommand"
+| where AdditionalFields contains "invoke-webrequest" or AdditionalFields contains "invoke-restmethod" or AdditionalFields contains "start-bitstransfer" or AdditionalFields contains "[System.Net.WebClient]"
+| join DeviceProcessEvents on DeviceId
+| where Timestamp1 between (Timestamp..datetime_add("minute",5,Timestamp))
+| where InitiatingProcessParentFileName1 =~ "powershell.exe"
+| invoke FileProfile(SHA2561, 100)
+| where GlobalPrevalence < 10
+| project FileName1, ProcessCommandLine1, InitiatingProcessCommandLine, InitiatingProcessCommandLine1, InitiatingProcessParentFileName, InitiatingProcessParentFileName1, GlobalPrevalence
