@@ -1,0 +1,14 @@
+// hunting for lolbins with live data from Oddvar Moe's lolbin collection here: https://github.com/LOLBAS-Project/LOLBAS
+// checks for lolbins with specified prevelance
+// author: @janvonkirchheim
+
+let x = (externaldata(lolbin:string)
+[@"https://raw.githubusercontent.com/api0cradle/LOLBAS/master/LOLBins.md"] with (format="txt"));
+let lolbinArray = x
+| extend lol = extract_all(@"\[(.*?)\]", lolbin)[0]
+| project lol;
+DeviceProcessEvents 
+| where InitiatingProcessParentFileName in (lolbinArray)
+| invoke FileProfile(SHA256)
+| where GlobalPrevalence < 100
+| distinct FileName, GlobalPrevalence
