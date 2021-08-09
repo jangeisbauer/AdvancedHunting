@@ -1,0 +1,7 @@
+// hunts for active rdp connections from public IP addresses
+// author: @janvonkirchheim
+
+DeviceNetworkEvents 
+| where RemoteIPType == "Public"
+| where InitiatingProcessCommandLine has_any ("TermService","termsvcs")
+| distinct DeviceName
