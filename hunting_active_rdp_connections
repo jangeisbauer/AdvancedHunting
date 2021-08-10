@@ -1,7 +1,11 @@
 // hunts for active rdp connections from public IP addresses
 // author: @janvonkirchheim
 
-DeviceNetworkEvents 
+let publicIPs = DeviceNetworkEvents 
 | where RemoteIPType == "Public"
 | where InitiatingProcessCommandLine has_any ("TermService","termsvcs")
-| distinct DeviceName
+| project RemoteIP;
+DeviceLogonEvents 
+| where RemoteIP in (publicIPs)
+| summarize Failed = countif(ActionType == 'LogonFailed'),Success =  countif(ActionType == 'LogonSuccess'), totalip = dcount(RemoteIP ) by DeviceName, RemoteIP
+| sort by Failed desc  
