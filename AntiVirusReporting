@@ -1,6 +1,10 @@
-// Reports on "update antivirus signatures == Scid-2011"
-// based on OS Plattform
-// Author: @janvonkirchheim
+// last modified:09/2021
+// author:@janvonkirchheim
+// id:0de927ab-07ed-44ba-8796-4da314c61bad
+// product_family:MDE
+// name:Update Antivirus Signatures Report
+// category:Report
+// description:Reports on "update antivirus signatures == Scid-2011" based on OS Plattform
 
 DeviceTvmSecureConfigurationAssessment 
 | where ConfigurationId == "scid-2011" // update antivirus signatures
