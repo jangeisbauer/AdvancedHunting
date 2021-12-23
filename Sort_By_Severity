@@ -1,0 +1,13 @@
+// Kusto Example to sort by Custom Value - in this case 'Severity'
+// Author @janvonkirchheim
+//
+ AlertInfo
+ | join AlertEvidence on AlertId
+ | where ServiceSource == "Microsoft Defender for Endpoint"
+ | summarize count() by AlertId, Timestamp, Title, Severity | project-away AlertId, count_
+ | extend AlertSeverity =
+    case(Severity == "High", 1,
+         Severity == "Medium", 2,
+         Severity == "Low",3,4)
+| order by AlertSeverity asc
+| project-away AlertSeverity
