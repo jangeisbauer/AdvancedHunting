@@ -1,0 +1,8 @@
+// will report all devices with log4j vulnerability
+// including reg-paths and disk-paths
+// author: @jangeisbauer
+
+DeviceTvmSoftwareVulnerabilities
+| where CveId == "CVE-2021-44228"
+| join kind=leftouter DeviceTvmSoftwareEvidenceBeta on SoftwareName, DeviceId
+| project DeviceName, LastSeenTime, OSPlatform, SoftwareVendor, SoftwareName, RegistryPaths, DiskPaths
