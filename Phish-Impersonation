@@ -1,0 +1,5 @@
+// list all distinct impersonation domains
+
+EmailEvents 
+| where DetectionMethods contains "impersonation"
+| distinct SenderFromAddress, SenderDisplayName, SenderMailFromDomain, SenderFromDomain, DetectionMethods
