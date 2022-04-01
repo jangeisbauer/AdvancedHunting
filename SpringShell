@@ -1,0 +1,20 @@
+// This query will help you narrow down the currently known needed conditions for the exploitation of SpringShell described in
+// https://unit42.paloaltonetworks.com/cve-2022-22965-springshell/
+// At least it is looking via MDE for systems that have JDK v9 or higher and Tomcat installed
+// author: @jangeisbauer 
+// April 2022
+
+let allJDKs = DeviceTvmSoftwareInventory 
+| where SoftwareVendor contains "oracle" 
+| where SoftwareName contains "jdk" 
+| mv-expand version = parse_json(split(SoftwareVersion,".",0)) 
+| where ['version'] >= 9;
+DeviceTvmSoftwareInventory
+| where SoftwareName contains "tomcat"
+| where DeviceId in (allJDKs)
+
+
+// another idea would be to look for file activity of the .war files, but I am not sure how often that would happen
+
+DeviceFileEvents 
+| where FileName endswith ".war"
