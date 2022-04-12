@@ -1,0 +1,8 @@
+// searches for AADDeviceIDs that are assigned to multiple DeviceNames
+// Author: @jangeisbauer
+
+DeviceInfo 
+| where AadDeviceId != ""
+| summarize x=make_set(DeviceName) by AadDeviceId
+| project DeviceNameCountByID=array_length(x), AadDeviceId
+| where DeviceNameCountByID > 1
