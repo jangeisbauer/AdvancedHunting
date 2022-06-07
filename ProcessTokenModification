@@ -1,0 +1,56 @@
+// hunt for token modifications in processes. In the below case in particular for SeDebugPrivilege.
+// You can change the privilege number in "extend SeDebugPrivilege_ = (CurrentTokenPrivEnabled_ / toint(pow(2, 20))) % 2" (in that case "20")
+// accordingly to the privileges in the privilege table
+// author: @jangeisbauer
+
+let Privileges =
+[
+  '00','SeIncreaseQuotaPrivilege',           
+  '01','SeSecurityPrivilege',                
+  '02','SeTakeOwnershipPrivilege',           
+  '03','SeLoadDriverPrivilege',              
+  '04','SeSystemProfilePrivilege',           
+  '05','SeSystemtimePrivilege',              
+  '06','SeProfileSingleProcessPrivilege',    
+  '07','SeIncreaseBasePriorityPrivilege',    
+  '08','SeCreatePagefilePrivilege',          
+  '09','SeBackupPrivilege',                  
+  '10','SeRestorePrivilege',                 
+  '11','SeShutdownPrivilege',                
+  '12','SeDebugPrivilege',                   
+  '13','SeSystemEnvironmentPrivilege',       
+  '14','SeChangeNotifyPrivilege',         
+  '15','SeRemoteShutdownPrivilege',          
+  '16','SeUndockPrivilege',                  
+  '17','SeManageVolumePrivilege',            
+  '18','SeImpersonatePrivilege',           
+  '19','SeCreateGlobalPrivilege',           
+  '20','SeIncreaseWorkingSetPrivilege',      
+  '21','SeTimeZonePrivilege',                
+  '22','SeCreateSymbolicLinkPrivilege',      
+  '23','SeDelegateSessionUserImpersonatePrivilege' 
+];
+
+DeviceEvents
+| where ActionType == "ProcessPrimaryTokenModified"
+| extend CurrentTokenIntegrityLevel_ = parse_json(AdditionalFields).CurrentTokenIntegrityLevel
+| extend CurrentTokenPointer_ = parse_json(AdditionalFields).CurrentTokenPointer
+| extend CurrentTokenPrivEnabled_ = parse_json(AdditionalFields).CurrentTokenPrivEnabled
+| extend CurrentTokenSource_ = parse_json(AdditionalFields).CurrentTokenSource
+| extend CurrentTokenUserSid_ = parse_json(AdditionalFields).CurrentTokenUserSid
+| extend OriginalTokenIntegrityLevel_ = parse_json(AdditionalFields).OriginalTokenIntegrityLevel
+| extend OriginalTokenPointer_ = parse_json(AdditionalFields).OriginalTokenPointer
+| extend OriginalTokenPrivEnabled_ = parse_json(AdditionalFields).OriginalTokenPrivEnabled
+| extend OriginalTokenPrivPresent_ = parse_json(AdditionalFields).OriginalTokenPrivPresent
+| extend OriginalTokenSource_ = parse_json(AdditionalFields).OriginalTokenSource
+| extend OriginalTokenUserSid_ = parse_json(AdditionalFields).OriginalTokenUserSid
+| extend SystemTokenPointer_ = parse_json(AdditionalFields).SystemTokenPointer
+| extend currentTokenIntegrityLevelName_ = parse_json(AdditionalFields).currentTokenIntegrityLevelName
+| extend TokenModificationProperties = parse_json(parse_json(AdditionalFields).TokenModificationProperties)
+| extend tokenChangeDescription_ = extractjson("$.tokenChangeDescription", tostring(TokenModificationProperties))
+| extend privilegesFlags_ = extractjson("$.privilegesFlags", tostring(TokenModificationProperties))
+| extend isChangedToSystemToken_ = extractjson("$.isChangedToSystemToken", tostring(TokenModificationProperties))
+| extend originalTokenIntegrityLevelName_ = extractjson("$.originalTokenIntegrityLevelName", tostring(TokenModificationProperties))
+| extend currentTokenIntegrityLevelName_ = extractjson("$.currentTokenIntegrityLevelName", tostring(TokenModificationProperties))
+| extend SeDebugPrivilege_ = (CurrentTokenPrivEnabled_ / toint(pow(2, 20))) % 2
+| project InitiatingProcessFileName, InitiatingProcessCommandLine, CurrentTokenIntegrityLevel_, CurrentTokenPointer_, CurrentTokenPrivEnabled_, CurrentTokenSource=base64_decode_tostring(tostring(CurrentTokenSource_)), CurrentTokenUserSid_, OriginalTokenIntegrityLevel_, OriginalTokenPointer_, OriginalTokenPrivEnabled_, OriginalTokenPrivPresent_, OriginalTokenSource=base64_decode_tostring(tostring(OriginalTokenSource_)), OriginalTokenUserSid_, SystemTokenPointer_, currentTokenIntegrityLevelName_, isChangedToSystemToken_, originalTokenIntegrityLevelName_, privilegesFlags_, tokenChangeDescription_, SeDebugPrivilege=iff(SeDebugPrivilege_==1,"Yes","No")
