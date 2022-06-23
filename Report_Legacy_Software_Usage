@@ -1,0 +1,12 @@
+// Searches for office 2010 installations and its executeable paths, then joins this with process events
+// to get information about the usage of this legacy software
+// Author: @jangeisbauer
+
+DeviceTvmSoftwareInventory 
+| where SoftwareName contains "office" and SoftwareName contains "2010"
+| join DeviceTvmSoftwareEvidenceBeta on SoftwareName
+| mv-expand exe = DiskPaths
+| where exe contains "winword" or exe contains "power" or exe contains "access" or exe contains "excel"
+| distinct tostring(exe)
+| join kind=leftouter DeviceProcessEvents on $left.exe == $right.FolderPath
+| distinct FolderPath, FileName, MD5, SHA1, SHA256
