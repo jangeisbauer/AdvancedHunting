@@ -1,0 +1,13 @@
+// is hunting for tools like chisel that have an active connection to the public address space and at the same
+// time to an other internal address. With that the attacker can forward (proxy) tools from the attacker machine through
+// an internal client to the final target. 
+//
+// author: @jangeisbauer
+
+DeviceNetworkEvents
+| where isnotempty(InitiatingProcessFileName)
+| where RemoteIPType != "Loopback" and RemoteIPType != "FourToSixMapping"
+| summarize ipSet = make_set(strcat(RemoteIP, " (RemoteIPType: ", RemoteIPType, ")")) by InitiatingProcessFileName, bin(Timestamp, 1s), InitiatingProcessFolderPath
+| where array_length(ipSet) > 1
+| where InitiatingProcessFolderPath !startswith @"c:\program files" and InitiatingProcessFolderPath !startswith @"c:\windows" and InitiatingProcessFolderPath !startswith @"c:\programdata"
+| where ipSet has "private" and ipSet has "public" 
