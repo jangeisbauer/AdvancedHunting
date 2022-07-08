@@ -7,7 +7,7 @@
 DeviceNetworkEvents
 | where isnotempty(InitiatingProcessFileName)
 | where RemoteIPType != "Loopback" and RemoteIPType != "FourToSixMapping"
-| summarize ipSet = make_set(strcat(RemoteIP, " (RemoteIPType: ", RemoteIPType, ")")) by InitiatingProcessFileName, bin(Timestamp, 1s), InitiatingProcessFolderPath
+| summarize ipSet = make_set(strcat(RemoteIP, " (RemoteIPType: ", RemoteIPType, ")")) by DeviceName, InitiatingProcessFileName, bin(Timestamp, 1s), InitiatingProcessFolderPath
 | where array_length(ipSet) > 1
 | where InitiatingProcessFolderPath !startswith @"c:\program files" and InitiatingProcessFolderPath !startswith @"c:\windows" and InitiatingProcessFolderPath !startswith @"c:\programdata"
 | where ipSet has "private" and ipSet has "public" 
