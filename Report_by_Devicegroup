@@ -1,0 +1,13 @@
+// KQL to report anything by device group, calculating a factor per devices in the device group
+// in this case here I am reporting on critical vulnerabilities per device group relative to the device count of the group
+// author: @jangeisbauer
+
+DeviceInfo
+| summarize arg_max(Timestamp,*) by  DeviceName
+| summarize MachineGroupCount = count()by MachineGroup
+| join DeviceInfo on MachineGroup
+| join DeviceTvmSoftwareVulnerabilities on DeviceId
+| where VulnerabilitySeverityLevel == "Critical"
+| summarize CriticalVulnerabilityCount = count() by MachineGroup, MachineGroupCount
+| project MachineGroup, DevicesInMachineGroup=MachineGroupCount, CriticalVulnInDeviceGroup=CriticalVulnerabilityCount, CriticalVulnPerDeviceCountFactor = bin((bin(CriticalVulnerabilityCount, 0.01) / bin(MachineGroupCount,0.01))*100, 1)
+| order by CriticalVulnPerDeviceCountFactor desc 
